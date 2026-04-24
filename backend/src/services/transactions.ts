@@ -6,11 +6,11 @@ export const transactionsService = {
     return transactionsRepository.findAll(from, to);
   },
 
-  create(data: CreateTransaction) {
+  create(data: CreateTransaction & { tagIds?: number[] }) {
     return transactionsRepository.create(data);
   },
 
-  update(id: number, data: UpdateTransaction) {
+  update(id: number, data: UpdateTransaction & { tagIds?: number[] }) {
     return transactionsRepository.update(id, data);
   },
 
