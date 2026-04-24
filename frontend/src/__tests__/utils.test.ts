@@ -42,6 +42,7 @@ const makeTx = (overrides: Partial<Transaction> = {}): Transaction => ({
   date: '2025-01-15',
   createdAt: '2025-01-15T10:00:00.000Z',
   updatedAt: '2025-01-15T10:00:00.000Z',
+  tags: [],
   ...overrides,
 });
 

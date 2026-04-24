@@ -1,4 +1,4 @@
-import type { Category, DashboardData, Transaction, TransactionFormData, Period } from '../types';
+import type { Category, DashboardData, Tag, Transaction, TransactionFormData, Period } from '../types';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = { ...(options?.headers as Record<string, string>) };
@@ -38,13 +38,13 @@ export const api = {
 
   getCategories: () => request<Category[]>('/api/categories'),
 
-  createTransaction: (data: TransactionFormData) =>
+  createTransaction: (data: TransactionFormData & { tagIds?: number[] }) =>
     request<Transaction>('/api/transactions', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
 
-  updateTransaction: (id: number, data: Partial<TransactionFormData>) =>
+  updateTransaction: (id: number, data: Partial<TransactionFormData> & { tagIds?: number[] }) =>
     request<Transaction>(`/api/transactions/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
@@ -52,4 +52,15 @@ export const api = {
 
   deleteTransaction: (id: number) =>
     request<void>(`/api/transactions/${id}`, { method: 'DELETE' }),
+
+  getTags: () => request<Tag[]>('/api/tags'),
+
+  createTag: (data: { name: string; color: string }) =>
+    request<Tag>('/api/tags', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  deleteTag: (id: number) =>
+    request<void>(`/api/tags/${id}`, { method: 'DELETE' }),
 };
