@@ -31,11 +31,15 @@ function formatDayHeader(dateStr: string): string {
 interface TransactionListProps {
   transactions: Transaction[];
   onEdit: (tx: Transaction) => void;
+  selectedTagIds?: number[];
 }
 
-export function TransactionList({ transactions, onEdit }: TransactionListProps) {
+export function TransactionList({ transactions, onEdit, selectedTagIds = [] }: TransactionListProps) {
   const queryClient = useQueryClient();
-  const groups = groupByDay(transactions);
+  const filtered = selectedTagIds.length === 0
+    ? transactions
+    : transactions.filter((tx) => tx.tags.some((t) => selectedTagIds.includes(t.id)));
+  const groups = groupByDay(filtered);
 
   const deleteMutation = useMutation({
     mutationFn: api.deleteTransaction,

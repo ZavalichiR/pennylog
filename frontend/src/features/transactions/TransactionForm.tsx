@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import type { Transaction } from '../../types';
 import { api } from '../../api/client';
+import { TagChip } from '../../shared/components/TagChip';
 
 const schema = z.object({
   type: z.enum(['income', 'expense']),
@@ -24,6 +25,9 @@ interface TransactionFormProps {
 
 export function TransactionForm({ transaction, onSuccess, onCancel }: TransactionFormProps) {
   const today = new Date().toISOString().split('T')[0];
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>(
+    transaction?.tags.map((t) => t.id) ?? [],
+  );
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -47,14 +51,22 @@ export function TransactionForm({ transaction, onSuccess, onCancel }: Transactio
         date: transaction.date,
         description: transaction.description ?? '',
       });
+      setSelectedTagIds(transaction.tags.map((t) => t.id));
     } else {
       reset({ type: 'expense', date: today, categoryId: 0, description: '' });
+      setSelectedTagIds([]);
     }
   }, [transaction, reset, today]);
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories'],
     queryFn: api.getCategories,
+    staleTime: Infinity,
+  });
+
+  const { data: tags = [] } = useQuery({
+    queryKey: ['tags'],
+    queryFn: api.getTags,
     staleTime: Infinity,
   });
 
@@ -84,7 +96,7 @@ export function TransactionForm({ transaction, onSuccess, onCancel }: Transactio
 
   const onSubmit = (data: FormData) => {
     // Convert user-entered dollars to integer cents before sending.
-    const payload = { ...data, amount: Math.round(data.amount * 100) };
+    const payload = { ...data, amount: Math.round(data.amount * 100), tagIds: selectedTagIds };
     if (transaction) {
       updateMutation.mutate({ id: transaction.id, data: payload });
     } else {
@@ -167,6 +179,31 @@ export function TransactionForm({ transaction, onSuccess, onCancel }: Transactio
             data-testid="description-input"
           />
         </div>
+
+        {/* Tags */}
+        {tags.length > 0 && (
+          <div className="form-field">
+            <label className="form-label">Tags (optional)</label>
+            <div className="tag-picker-row">
+              {tags.map((tag) => (
+                <TagChip
+                  key={tag.id}
+                  name={tag.name}
+                  color={tag.color}
+                  active={selectedTagIds.includes(tag.id)}
+                  onClick={() => {
+                    setSelectedTagIds((prev) =>
+                      prev.includes(tag.id)
+                        ? prev.filter((id) => id !== tag.id)
+                        : [...prev, tag.id],
+                    );
+                  }}
+                  data-testid={`tag-picker-${tag.id}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {mutationError && (
           <div className="form-error" role="alert">{mutationError.message}</div>
