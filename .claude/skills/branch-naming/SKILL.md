@@ -1,10 +1,15 @@
 ---
 name: branch-naming
-description: Standard branch naming convention for all work produced by this orchestration setup.
+description: Standard branch naming convention optimized for Linear + GitHub integration
 ---
 
 ## Format
-`<type>/<ticket-or-slug>-<kebab-description>`
+`<type>/<ticket-key>-<kebab-description>`
+
+## Examples
+- `feature/PRJ-5-add-user-defined-transaction-tags`
+- `feature/PRJ-5-add-tags-database`
+- `fix/PRJ-12-fix-amount-calculation`
 
 ## Types
 - `feature/` — new user-visible capability
@@ -15,16 +20,13 @@ description: Standard branch naming convention for all work produced by this orc
 - `test/`    — tests only
 
 ## Stacked / layered branches
-When a single feature spans multiple layers, suffix the layer:
-- `feature/ENG-123-add-export-domain`
-- `feature/ENG-123-add-export-api`
-- `feature/ENG-123-add-export-ui`
-
-## Integration branches (temporary)
-`temp-e2e-integration-<slug>` — always prefixed `temp-`; must be deleted
-or surfaced for deletion at cleanup time.
+When a feature spans multiple layers, keep the same ticket key and suffix the layer:
+- `feature/PRJ-5-add-tags-database`
+- `feature/PRJ-5-add-tags-api`
+- `feature/PRJ-5-add-tags-frontend`
 
 ## Rules
-- Kebab case only; lowercase; no spaces; no underscores.
-- Keep the description under 5 words.
-- Include the ticket key when one exists.
+- Ticket key (e.g. `PRJ-5`) must appear **immediately after** the type
+- Kebab case only, lowercase, no spaces
+- Keep the description short and descriptive (< 5–6 words)
+- This format maximizes Linear’s automatic GitHub linking for branches and PRs

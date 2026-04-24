@@ -12,9 +12,10 @@ For tiny changes (<20 LOC, single file, no cross-layer effect) edit directly in 
 
 ## Phase 1 — Input Analysis
 Parse the request:
-- Ticket key / URL → fetch ticket + sub-issues
-- Doc URL → fetch page
-- Otherwise treat the message as the spec
+
+- **Linear ticket** (key like `PRJ-5` or Linear URL) → use the `linear` skill to fetch the ticket + **all sub-issues**
+- **Notion URL** (or other documentation URL) → fetch the page content
+- Otherwise treat the entire user message as the feature specification
 
 If the spec contains **multiple independent tasks**, identify and list them clearly.  
 If ambiguous, ask one clarifying question and stop.
@@ -23,6 +24,10 @@ If ambiguous, ask one clarifying question and stop.
 
 ## Phase 2 — Planning (mandatory interactive gate)
 Enter **Plan Mode** (read-only). Produce the plan in this exact scannable shape:
+Use the clean tree format with `├──` and `└──` for all of the following sections:
+- Dependency analysis (DAG)
+- Branch strategy
+- Planned sub-agent execution
 
 ```
 ## Goal
@@ -40,22 +45,22 @@ Enter **Plan Mode** (read-only). Produce the plan in this exact scannable shape:
 
 ## Dependency analysis
 - Pattern: <parallel | chain | fan-in | partial>
-- DAG:     <e.g. "domain → api → ui;  tests fan in at end">
+- DAG:     [Show the flow using tree structure with ├── and └──. Clearly mark parallel work.]
 - Mode:    <parallel | sequential | hybrid>
 - Rationale: <one sentence on why this pattern>
 
 ## Branch strategy
 - Prefer small, focused, independent PRs where possible.
 - Base branch: main
-- Branches: feature/<slug>-<layer> (from <prev or main>, stacked when needed)
+  [Show the branch hierarchy using tree structure with ├── and └──. Clearly mark parallel branches.]
 - Integration branch (if fan-in): temp-e2e-integration-<slug>
 
 ## Planned sub-agent execution
-- business-logic-agent → <one sentence>
-- api-agent            → <one sentence>
-- frontend-agent       → <one sentence>
-- testing-agent        → <one sentence>
-- code-reviewer        → final gate
+Show each agent in tree format:
+ - Agent name
+ - Branch name (with relevant ticket numbers)
+ - Short description of work
+ - Clearly mark any parallel groups with "(parallel)"
 ```
 Stop and wait for explicit approval (“proceed”, “approve”, “go ahead”). Iterate if needed.
 

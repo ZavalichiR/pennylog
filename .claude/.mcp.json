@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "linear": {
+      "type": "stdio",
+      "command": "https://mcp.linear.app/mcp",
+      "args": [],
+      "env": {}
+    },
+    "notion": {
+      "type": "stdio",
+      "command": "https://mcp.notion.com/mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
