@@ -23,7 +23,12 @@ If ambiguous, ask one clarifying question and stop.
 ---
 
 ## Phase 2 — Planning (mandatory interactive gate)
-Enter **Plan Mode** (read-only). Produce the plan using this exact structure and tree format:
+Enter **Plan Mode** (read-only). Produce the plan in this exact scannable shape.
+
+Use the clean tree format with `├──` and `└──` for all of the following sections:
+- Dependency analysis (DAG)
+- Branch strategy
+- Planned sub-agent execution
 
 ```
 ## Goal
@@ -41,13 +46,15 @@ Enter **Plan Mode** (read-only). Produce the plan using this exact structure and
 
 ## Dependency analysis
 - Pattern: <parallel | chain | fan-in | partial>
-- DAG:     [Use clean tree format with ├── and └──. Clearly mark parallel branches]
+- DAG:     [Show the flow using tree structure with ├── and └──. Clearly mark parallel work.]
 - Mode:    <parallel | sequential | hybrid>
 - Rationale: <one sentence on why this pattern>
 
 ## Branch strategy
+- Default rule: create **at least one dedicated branch** and one dedicated PR per Linear ticket.
+- Do not combine multiple tickets into a single branch/PR unless the user explicitly approves it.
 - Prefer small, focused, independent PRs.
-- Base branch: main [Use clean tree format with ├── and └──. Clearly mark parallel branches]
+- Base branch: main [Show the flow using tree structure with ├── and └──. Clearly mark parallel work.]
 - Integration branch (if fan-in): temp-e2e-integration-<slug>
 
 ## Planned sub-agent execution
@@ -55,7 +62,7 @@ Show each agent in tree format:
  - Agent name
  - Branch name (with relevant ticket numbers)
  - Short description of work
- - Clearly mark any parallel groups with "(parallel)"
+ - [Show the flow using tree structure with ├── and └──. Clearly mark parallel work.]
 ```
 Stop and wait for explicit approval (“proceed”, “approve”, “go ahead”). Iterate if needed.
 
