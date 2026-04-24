@@ -1,32 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
-    "allow": [
-      "Bash(git *)",
-      "Bash(npm run *)",
-      "Bash(pnpm run *)",
-      "Bash(yarn *)",
-      "Bash(bun *)",
-      "Bash(cargo *)",
-      "Bash(go *)",
-      "Bash(python *)",
-      "Bash(pytest *)",
-      "Bash(ruff *)",
-      "Bash(eslint *)",
-      "Bash(prettier *)",
-      "Bash(tsc *)",
-      "Bash(vite *)",
-      "Bash(next *)"
-    ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(./**/.env)",
       "Bash(rm -rf /)",
-      "Bash(sudo *)",
-      "Bash(curl *)",
-      "Bash(wget *)"
+      "Bash(sudo *)"
     ],
     "ask": [
       "Bash(git push *)",
@@ -34,26 +11,10 @@
       "Bash(git reset --hard *)"
     ]
   },
-
-  "worktree": {
-    "symlinkDirectories": [
-      ".claude",
-      "node_modules",
-      ".cache",
-      ".venv",
-      "venv"
-    ]
-  },
-
   "defaultMode": "acceptEdits",
 
   "attribution": {
-    "commit": "🤖 Generated with Claude Code orchestration\n\nCo-Authored-By: Claude Sonnet <noreply@anthropic.com>",
+    "commit": "🤖 Generated with Claude Code orchestration",
     "pr": ""
-  },
-
-
-  "showTurnDuration": true,
-  "terminalProgressBarEnabled": true,
-  "autoUpdatesChannel": "stable"
+  }
 }

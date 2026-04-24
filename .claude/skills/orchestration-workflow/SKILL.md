@@ -23,11 +23,7 @@ If ambiguous, ask one clarifying question and stop.
 ---
 
 ## Phase 2 — Planning (mandatory interactive gate)
-Enter **Plan Mode** (read-only). Produce the plan in this exact scannable shape:
-Use the clean tree format with `├──` and `└──` for all of the following sections:
-- Dependency analysis (DAG)
-- Branch strategy
-- Planned sub-agent execution
+Enter **Plan Mode** (read-only). Produce the plan using this exact structure and tree format:
 
 ```
 ## Goal
@@ -45,14 +41,13 @@ Use the clean tree format with `├──` and `└──` for all of the follow
 
 ## Dependency analysis
 - Pattern: <parallel | chain | fan-in | partial>
-- DAG:     [Show the flow using tree structure with ├── and └──. Clearly mark parallel work.]
+- DAG:     [Use clean tree format with ├── and └──. Clearly mark parallel branches]
 - Mode:    <parallel | sequential | hybrid>
 - Rationale: <one sentence on why this pattern>
 
 ## Branch strategy
-- Prefer small, focused, independent PRs where possible.
-- Base branch: main
-  [Show the branch hierarchy using tree structure with ├── and └──. Clearly mark parallel branches.]
+- Prefer small, focused, independent PRs.
+- Base branch: main [Use clean tree format with ├── and └──. Clearly mark parallel branches]
 - Integration branch (if fan-in): temp-e2e-integration-<slug>
 
 ## Planned sub-agent execution
@@ -67,47 +62,82 @@ Stop and wait for explicit approval (“proceed”, “approve”, “go ahead�
 ---
 
 ## Phase 3 — Dependency-Aware Delegation
-`git fetch --all --prune` and ensure clean main.
 
-Execute according to the approved plan:
-- Independent work → parallel (each from main)
-- Dependent work → sequential (branch from upstream branch)
-- Fan-in → use temporary integration branch when required
+Run `git fetch --all --prune` and ensure the main session is clean and on `main`.
 
-Use worktree isolation for all agents except `code-reviewer`.
+**For every agent (strict rules):**
 
----
-
-## Phase 4 — Integration & Verification
-
-1. Collect results from all agents.
-2. If the pattern was fan-in or hybrid, ensure the integration branch
-   exists and contains all upstream work.
-3. From the integration branch (or the tip of a linear stack), run the
-   full project verification: lint, typecheck, build, unit, integration,
-   E2E. Fix failures by dispatching back to the responsible agent — never
-   silently patch in the orchestrator.
-4. Invoke `code-reviewer` on the combined diff vs `main`.
+- Use the **exact branch name** from the approved plan and `branch-naming` skill (`feature/ZAV-5-...`).
+- Create the branch if it doesn't exist: `git checkout -b <exact-branch-name>`
+- Create a dedicated worktree for this branch.
+- Delegate the sub-agent to work **only** inside that worktree.
+- After the sub-agent finishes:
+  - Run lint, type-check, build, and relevant tests on that branch.
+  - If checks pass → the sub-agent already committed using `commit-message` skill → **delete the worktree immediately**.
+  - If checks fail → delegate fixes back to the same agent and re-verify.
+- **Never** run `code-reviewer` here — only technical verification.
 
 ---
 
-## Layer 5: Delivery & Cleanup
-Only after `code-reviewer` returns `APPROVE`:
+## Phase 4 — Integration & Final Code Review
 
-1. Apply `branch-naming`, `commit-message`, and `pr-description` skills.
+Only after **all** individual agents have completed and passed technical verification:
+
+- For chain patterns: the last branch becomes the integration point.
+- For fan-in / parallel patterns:
+  - Create `temp-e2e-integration-<slug>`
+  - Merge the upstream branches into it (in the exact order from the plan).
+- From the integration branch (or final branch), run full project verification (lint + build + unit + E2E).
+- Run `code-reviewer` **exactly once** on the combined diff vs `main`.
+- If changes are requested → delegate fixes back to the responsible agent(s) → re-verify.
+- Only when `code-reviewer` returns `APPROVE`, proceed to Layer 5.
+
+---
+
+## Phase 5: Delivery & Cleanup
+**Only after `code-reviewer` returns `APPROVE` in Phase 4**:
+
+1. Apply `pr-description` skill where needed (only if creating PRs).
 2. **Synchronize branches (dependency-aware)**:
    - Rebase base/root branches on latest `main`.
-   - Sequentially rebase stacked branches onto their parent (follow topological order from the plan).
+   - Sequentially rebase stacked branches onto their parent (follow plan order).
 3. **Push to remote (conditional)**:
    - Only if user explicitly requested PR creation → `git push --force-with-lease`
    - Otherwise keep everything local.
 4. **PR Creation Policy**:
    - Create PRs only if user explicitly requested it.
    - For stacked/fan-in patterns, document base branch and review order in PR description.
-5. Perform final cleanup:
-   - Run `git worktree prune`
-   - Delete all temporary worktrees
-   - (If created) report the name of the temporary E2E integration branch and the command to delete it: `git branch -D temp-e2e-integration-xxx`
+5. **Aggressive Cleanup**:
+   - Delete all temporary agent worktrees (except the final integration worktree if it exists).
+   - Run `git worktree prune`.
+   - Delete any spurious `worktree-agent-*` directories.
+   - Report remaining artifacts and manual cleanup commands.
+
+---
+
+## Phase 6 — Final Report (always generated)
+
+After cleanup, **always** output this exact report:
+Final Execution Report — <ticket>
+1. Execution Flow
+Agents ran in this order:
+Work done in parallel:
+Dependencies handled:
+
+2. Branches Created
+feature/... → created by [agent] | purpose: ...
+
+3. Worktrees Status
+Current worktrees (git worktree list):
+Explanation for any remaining worktrees.
+
+4. Manual Testing Guide
+You can test any branch manually:
+BranchCommand to testfeature/ZAV-5-...git checkout feature/ZAV-5-... && npm run test (or npm run build, npm run dev)temp-e2e-integration-<slug>cd .claude/worktrees/integration && npm run test (node_modules is already symlinked — no reinstall needed)
+
+5. Cleanup Summary
+What was cleaned
+Remaining artifacts + manual cleanup commands
 
 ---
 
