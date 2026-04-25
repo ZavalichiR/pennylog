@@ -5,11 +5,13 @@ import { Header } from './shared/components/Header';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { TransactionForm } from './features/transactions/TransactionForm';
 import { Modal } from './shared/components/Modal';
+import { TagManager } from './features/tags/TagManager';
 
 export default function App() {
   const [period, setPeriod] = useState<Period>('month');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
+  const [tagsOpen, setTagsOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const openAdd = () => {
@@ -35,7 +37,7 @@ export default function App() {
 
   return (
     <>
-      <Header period={period} onPeriodChange={setPeriod} onAdd={openAdd} />
+      <Header period={period} onPeriodChange={setPeriod} onAdd={openAdd} onOpenTags={() => setTagsOpen(true)} />
       <main className="main">
         <Dashboard period={period} onEdit={openEdit} />
       </main>
@@ -46,6 +48,7 @@ export default function App() {
           onCancel={closeForm}
         />
       </Modal>
+      <TagManager open={tagsOpen} onClose={() => setTagsOpen(false)} />
     </>
   );
 }
