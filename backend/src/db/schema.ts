@@ -19,6 +19,20 @@ export const transactions = sqliteTable('transactions', {
   updatedAt: text('updated_at').notNull(),
 });
 
+export const tags = sqliteTable('tags', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  name: text('name').notNull(),
+  color: text('color').notNull().default('#6366f1'),
+});
+
+export const transactionTags = sqliteTable('transaction_tags', {
+  transactionId: integer('transaction_id').notNull().references(() => transactions.id),
+  tagId: integer('tag_id').notNull().references(() => tags.id),
+});
+
 export type Category = typeof categories.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type NewTransaction = typeof transactions.$inferInsert;
+export type Tag = typeof tags.$inferSelect;
+export type NewTag = typeof tags.$inferInsert;
+export type TransactionTag = typeof transactionTags.$inferSelect;
