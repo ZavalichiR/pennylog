@@ -4,6 +4,7 @@ import { healthRoutes } from './routes/health.js';
 import { categoriesRoutes } from './routes/categories.js';
 import { transactionsRoutes } from './routes/transactions.js';
 import { dashboardRoutes } from './routes/dashboard.js';
+import { tagsRoutes } from './routes/tags.js';
 import { seedCategories, seedTransactions } from './db/seed.js';
 
 const app = Fastify({ logger: { level: 'warn' } });
@@ -18,6 +19,7 @@ await app.register(healthRoutes);
 await app.register(categoriesRoutes);
 await app.register(transactionsRoutes);
 await app.register(dashboardRoutes);
+await app.register(tagsRoutes);
 
 app.setErrorHandler((error, _req, reply) => {
   console.error(error);
