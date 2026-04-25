@@ -1,6 +1,7 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import type { Transaction } from '../../types';
 import { formatCents } from '../../utils';
+import { TagChip } from '../../shared/components/TagChip';
 
 interface TransactionItemProps {
   transaction: Transaction;
@@ -24,6 +25,15 @@ export function TransactionItem({ transaction: tx, onEdit, onDelete, isDeleting 
       <div className="tx-info">
         <div className="tx-name">{tx.categoryName}</div>
         {tx.description && <div className="tx-desc">{tx.description}</div>}
+        {tx.tags.length > 0 && (
+          <div className="tx-tags">
+            {tx.tags.map((tag) => (
+              <span key={tag.id} data-testid={`transaction-tag-${tag.id}`}>
+                <TagChip name={tag.name} color={tag.color} />
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       <div className="tx-right">
         <div className={`tx-amount ${tx.type}`}>

@@ -10,6 +10,7 @@ export default function App() {
   const [period, setPeriod] = useState<Period>('month');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTx, setEditingTx] = useState<Transaction | null>(null);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const queryClient = useQueryClient();
 
   const openAdd = () => {
@@ -35,9 +36,15 @@ export default function App() {
 
   return (
     <>
-      <Header period={period} onPeriodChange={setPeriod} onAdd={openAdd} />
+      <Header
+        period={period}
+        onPeriodChange={setPeriod}
+        onAdd={openAdd}
+        selectedTagIds={selectedTagIds}
+        onTagFilterChange={setSelectedTagIds}
+      />
       <main className="main">
-        <Dashboard period={period} onEdit={openEdit} />
+        <Dashboard period={period} onEdit={openEdit} selectedTagIds={selectedTagIds} />
       </main>
       <Modal isOpen={isFormOpen} onClose={closeForm} title={editingTx ? 'Edit Transaction' : 'Add Transaction'}>
         <TransactionForm

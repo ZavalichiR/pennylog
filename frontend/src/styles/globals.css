@@ -53,6 +53,10 @@ body { min-height: 100vh; }
   height: 60px;
   display: flex; align-items: center; gap: 16px;
 }
+.header-tag-filter {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 20px 4px;
+}
 .header-logo {
   font-size: 18px; font-weight: 700; color: var(--primary);
   letter-spacing: -0.5px; flex-shrink: 0;
@@ -339,6 +343,41 @@ body { min-height: 100vh; }
   background: var(--expense-bg); border: 1px solid var(--expense-border);
   border-radius: var(--radius-sm); padding: 12px 16px;
   color: var(--expense); font-size: 13px;
+}
+
+/* ── Tag Chip ── */
+.tag-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px; font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+  transition: opacity 0.15s, outline 0.1s;
+  user-select: none;
+}
+.tag-chip-remove {
+  background: transparent; border: none; cursor: pointer;
+  font-size: 13px; line-height: 1; padding: 0 0 0 2px;
+  color: inherit; opacity: 0.7; display: inline-flex; align-items: center;
+}
+.tag-chip-remove:hover { opacity: 1; }
+
+/* ── tx-tags ── */
+.tx-tags {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-top: 4px;
+}
+
+/* ── tag-filter-row (in header) ── */
+.tag-filter-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 8px 0;
+}
+
+/* ── tag-picker-row (in form) ── */
+.tag-picker-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
 }
 
 /* ── Responsive ── */

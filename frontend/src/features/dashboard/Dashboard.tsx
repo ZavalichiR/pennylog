@@ -10,9 +10,10 @@ import { EmptyState } from '../../shared/components/EmptyState';
 interface DashboardProps {
   period: Period;
   onEdit: (tx: Transaction) => void;
+  selectedTagIds?: number[];
 }
 
-export function Dashboard({ period, onEdit }: DashboardProps) {
+export function Dashboard({ period, onEdit, selectedTagIds = [] }: DashboardProps) {
   const { data: dashboard, isLoading: loadingDash, error: dashError } = useQuery({
     queryKey: ['dashboard', period],
     queryFn: () => api.getDashboard(period),
@@ -65,7 +66,7 @@ export function Dashboard({ period, onEdit }: DashboardProps) {
                 description="Add your first transaction to start tracking your finances."
               />
             ) : (
-              <TransactionList transactions={transactions} onEdit={onEdit} />
+              <TransactionList transactions={transactions} onEdit={onEdit} selectedTagIds={selectedTagIds} />
             )}
           </div>
         </div>
