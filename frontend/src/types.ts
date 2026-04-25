@@ -1,5 +1,7 @@
 export type Period = 'today' | 'week' | 'month' | 'year';
 
+export type Tag = { id: number; name: string; color: string };
+
 export interface Category {
   id: number;
   name: string;
@@ -21,6 +23,7 @@ export interface Transaction {
   description?: string | null;
   createdAt: string;
   updatedAt: string;
+  tags: Tag[];
 }
 
 export interface DashboardSummary {
